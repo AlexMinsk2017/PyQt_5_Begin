@@ -26,6 +26,12 @@ class MyWindow(QtWidgets.QWidget):
             QtWidgets.QWidget.closeEvent(self, ev)
         else:
             ev.ignore()
+    def keyPressEvent(self, ev):
+        if ev.key() == QtCore.Qt.Key_B:
+            print('Pressed key "B"')
+        if ev.modifiers() & QtCore.Qt.ShiftModifier:
+            print('Pressed modifiers "Shift"')
+        return  QtWidgets.QWidget.keyPressEvent(self, ev)
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
