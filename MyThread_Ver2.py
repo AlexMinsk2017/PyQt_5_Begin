@@ -40,6 +40,7 @@ class MyWindow(QtWidgets.QWidget):
         self.btnQuit.clicked.connect(QtWidgets.QApplication.exit)
         self.mythread.mysignal.connect(self.on_change, QtCore.Qt.QueuedConnection)
 
+
     def on_start(self):
         if not self.mythread.isRunning():
             self.mythread.start() #Запускаем поток
