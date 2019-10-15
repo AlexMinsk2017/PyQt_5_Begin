@@ -1,11 +1,11 @@
-from PyQt5 import QtWidgets, QtCore, QtMultimedia
+from PyQt5 import QtWidgets, QtCore, QtMultimedia, QtMultimediaWidgets
 import sys
 
 class MyWindow(QtWidgets.QWidget):
 
     def __init__(self, parent=None):
         QtWidgets.QWidget.__init__(self, parent, flags=QtCore.Qt.Window|QtCore.Qt.MSWindowsFixedSizeDialogHint)
-        self.setWindowTitle('Mediaplayer')
+        self.setWindowTitle('Videoplayer')
         #class mediaplayer
         self.mplPlayer = QtMultimedia.QMediaPlayer()
         self.mplPlayer.setVolume(50)
@@ -13,9 +13,16 @@ class MyWindow(QtWidgets.QWidget):
         self.mplPlayer.stateChanged.connect(self.setPlayerState)
         vbox = QtWidgets.QVBoxLayout()
 
+        vwg = QtMultimediaWidgets.QVideoWidget()
+        vwg.setAspectRatioMode(QtCore.Qt.KeepAspectRatio)
+        vwg.resize(300, 300)
+        self.mplPlayer.setVideoOutput(vwg)
+        # vbox.addWidget(vwg)
+
         btnOpen = QtWidgets.QPushButton('&Open file...')
         btnOpen.clicked.connect(self.openFile)
         vbox.addWidget(btnOpen)
+        vbox.addWidget(vwg)
 
         #Комопоненты управления медиа
         self.sldPosition = QtWidgets.QSlider(QtCore.Qt.Horizontal)
@@ -64,13 +71,13 @@ class MyWindow(QtWidgets.QWidget):
 
         #main vbox
         self.setLayout(vbox)
-        self.resize(800, 300)
+        self.resize(300, 500)
 
     def showMetadata(self, state):
         self.txtOutput.clear()
 
     def openFile(self):
-        file = QtWidgets.QFileDialog.getOpenFileUrl(parent=self, caption='Select audio file', filter='Audio files (*.mp3 *.ac3)')
+        file = QtWidgets.QFileDialog.getOpenFileUrl(parent=self, caption='Select video file', filter='Audio files (*.mp4 *.avi)')
         self.mplPlayer.setMedia(QtMultimedia.QMediaContent(file[0]))
 
     def initPlayer(self, state):
