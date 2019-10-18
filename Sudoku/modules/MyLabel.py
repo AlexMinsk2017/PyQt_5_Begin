@@ -49,3 +49,7 @@ class MyLabel(QtWidgets.QLabel):
         if self.isCellChange:
             self.setText(text)
 
+    def clearCellBlock(self):
+        self.isCellChange = True
+        self.fontColorCurrent = self.colorBlack
+        self.showColorCurrent()

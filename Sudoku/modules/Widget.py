@@ -43,6 +43,16 @@ class Widget(QtWidgets.QWidget):
         btns.append(btn)
         for btn in btns:
             hbox.addWidget(btn)
+        btns[0].clicked.connect(self.onBtn0Clicked)
+        btns[1].clicked.connect(self.onBtn1Clicked)
+        btns[2].clicked.connect(self.onBtn2Clicked)
+        btns[3].clicked.connect(self.onBtn3Clicked)
+        btns[4].clicked.connect(self.onBtn4Clicked)
+        btns[5].clicked.connect(self.onBtn5Clicked)
+        btns[6].clicked.connect(self.onBtn6Clicked)
+        btns[7].clicked.connect(self.onBtn7Clicked)
+        btns[8].clicked.connect(self.onBtn8Clicked)
+        btns[9].clicked.connect(self.onBtnXClicked)
 
         #-------------------
         frame2.setLayout(hbox)
@@ -50,7 +60,87 @@ class Widget(QtWidgets.QWidget):
         self.setLayout(vBoxMain)
 
     def onChangeCellFocus(self):
-        return
+        if self.idCellInFocus != id and not (id < 0 or id > 80):
+            self.cells[self.idCellInFocus].clearCellFocus()
+            self.idCellInFocus = id
+            self.cells[id].setCellFocus()
+
+    def keyPressEvent(self, evt):
+        key = evt.key()
+        if key == QtCore.Qt.Key_Up:
+            tid = self.idCellInFocus - 9
+            if tid < 0:
+                tid += 81
+            self.onChangeCellFocus(tid)
+        elif key == QtCore.Qt.Key_Right:
+            tid = self.idCellInFocus + 1
+            if tid > 80:
+                tid -= 81
+            self.onChangeCellFocus(tid)
+        elif key == QtCore.Qt.Key_Down:
+            tid = self.idCellInFocus + 9
+            if tid > 80:
+                tid -= 81
+            self.onChangeCellFocus(tid)
+        elif key == QtCore.Qt.Key_Left:
+            tid = self.idCellInFocus - 1
+            if tid < 0:
+                tid += 81
+            self.onChangeCellFocus(tid)
+        elif key >= QtCore.Qt.Key_1 and  key <= QtCore.Qt.Key_9:
+            self.cells[self.idCellInFocus].setNewText(chr(key))
+        elif key == QtCore.Qt.Key_Delete or key == QtCore.Qt.Key_Backspace or  key == QtCore.Qt.Key_Space:
+            self.cells[self.idCellInFocus].setNewText('')
+        QtWidgets.QWidget.keyPressEvent(self, evt)
+
+    def onBtn0Clicked(self):
+        self.cells[self.idCellInFocus].setNewText('1')
+    def onBtn1Clicked(self):
+        self.cells[self.idCellInFocus].setNewText('2')
+    def onBtn2Clicked(self):
+        self.cells[self.idCellInFocus].setNewText('3')
+    def onBtn3Clicked(self):
+        self.cells[self.idCellInFocus].setNewText('4')
+    def onBtn4Clicked(self):
+        self.cells[self.idCellInFocus].setNewText('5')
+    def onBtn5Clicked(self):
+        self.cells[self.idCellInFocus].setNewText('6')
+    def onBtn6Clicked(self):
+        self.cells[self.idCellInFocus].setNewText('7')
+    def onBtn7Clicked(self):
+        self.cells[self.idCellInFocus].setNewText('8')
+    def onBtn8Clicked(self):
+        self.cells[self.idCellInFocus].setNewText('9')
+    def onBtnXClicked(self):
+        self.cells[self.idCellInFocus].setNewText('')
+
+    def onClearAllCells(self):
+        for cell in self.cells:
+            cell.setText('')
+            cell.clearCellBlock()
+
+    def onBlockCell(self):
+        cell = self.cells[self.idCellInFocus]
+        if cell.text() == '':
+            QtWidgets.QMessageBox.information(self, 'Sudoku', 'You cannot block an empty cell')
+        else:
+            if cell.isCellChange:
+                cell.setCellBlock()
+
+    def onBlockCells(self):
+        for cell in self.cells:
+            if cell.text() and cell.isCellChange:
+                cell.setCellBlock()
+
+    def onClearBlockCell(self):
+        cell = self.cells[self.idCellInFocus]
+        if not cell.isCellChange:
+            cell.clearCellBlock()
+
+    def onClearBlockCells(self):
+        for cell in self.cells:
+            if not cell.isCellChange:
+                cell.clearCellBlock()
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
