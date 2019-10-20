@@ -97,6 +97,7 @@ class MyWindow(QtWidgets.QWidget):
             self.btnPlay.setEnabled(False)
             self.btnPause.setEnabled(False)
             self.btnStop.setEnabled(False)
+        self.setPlayerState(state)
 
     def setPlayerState(self, state):
         if state == QtMultimedia.QMediaPlayer.StoppedState:

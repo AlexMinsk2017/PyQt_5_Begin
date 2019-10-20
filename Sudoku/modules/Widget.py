@@ -59,7 +59,7 @@ class Widget(QtWidgets.QWidget):
         vBoxMain.addWidget(frame2, alignment=QtCore.Qt.AlignHCenter)
         self.setLayout(vBoxMain)
 
-    def onChangeCellFocus(self):
+    def onChangeCellFocus(self, id):
         if self.idCellInFocus != id and not (id < 0 or id > 80):
             self.cells[self.idCellInFocus].clearCellFocus()
             self.idCellInFocus = id

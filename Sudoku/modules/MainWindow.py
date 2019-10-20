@@ -1,9 +1,9 @@
 from PyQt5 import QtWidgets, QtCore, QtGui, QtPrintSupport
 from Sudoku.modules.Widget import Widget
 
-class MainWindow(QtWidgets.QWidget):
+class MainWindow(QtWidgets.QMainWindow):
     def __init__(self, parent=None):
-        QtWidgets.QWidget.__init__(self, parent, flags=QtCore.Qt.Window|QtCore.Qt.MSWindowsFixedSizeDialogHint)
+        QtWidgets.QMainWindow.__init__(self, parent, flags=QtCore.Qt.Window|QtCore.Qt.MSWindowsFixedSizeDialogHint)
         self.setWindowTitle('Sudoku 2.0')
         self.setStyleSheet('QFrame QPushButton {font-size:10pt;font-family:Verdana;color:black;font-weight:bold;}'
                            'MyLabel {font-size:14pt;font-family:Verdana;border:1px solid #9AA6A7;}')
@@ -17,7 +17,7 @@ class MainWindow(QtWidgets.QWidget):
         toolBar = QtWidgets.QToolBar()
 
         myMenuFile = menuBar.addMenu('&File')
-        action = myMenuFile.addAction(QtGui.QIcon(r'images/new.png'), '&New', self.sudoku.onClearAllCells,
+        action = myMenuFile.addAction(QtGui.QIcon(r'Sudoku/images/new.png'), '&New', self.sudoku.onClearAllCells,
                                       QtCore.Qt.CTRL + QtCore.Qt.Key_N)
         toolBar.addAction(action)
         action.setStatusTip('Create the new, empty game')
@@ -32,7 +32,7 @@ class MainWindow(QtWidgets.QWidget):
         action = myMenuEdit.addAction('&Block', self.sudoku.onBlockCell, QtCore.Qt.Key_F2)
         action.setStatusTip('Blocked active cell')
 
-        action = myMenuEdit.addAction(QtGui.QIcon(r'images/lock.png'), 'B&locked all', self.sudoku.onBlockCells,
+        action = myMenuEdit.addAction(QtGui.QIcon(r'Sudoku/images/lock.png'), 'B&locked all', self.sudoku.onBlockCells,
                                       QtCore.Qt.Key_F3)
         toolBar.addAction(action)
         action.setStatusTip('Blocked all cells')
@@ -40,7 +40,7 @@ class MainWindow(QtWidgets.QWidget):
         action =myMenuEdit.addAction('&Unlock', self.sudoku.onClearBlockCell, QtCore.Qt.Key_F4)
         action.setStatusTip('Unlock active cell')
 
-        action = myMenuEdit.addAction(QtGui.QIcon9r('images/unlock.png'), 'U&lock all',
+        action = myMenuEdit.addAction(QtGui.QIcon(r'Sudoku/images/unlock.png'), 'U&lock all',
                                       self.sudoku.onClearBlockCells, QtCore.Qt.Key_F5)
         toolBar.addAction(action)
         action.setStatusTip('Unlock all cells')
@@ -55,11 +55,11 @@ class MainWindow(QtWidgets.QWidget):
         toolBar.setFloatable(False)
         self.addToolBar(toolBar)
 
-        statusBar = self.StatusBar()
-        statusBar.setSizeGribEnabled(False)
-        statusBar.showMessage('\"Sudoku\" greets you', 20000)
-        if self.settings.contains('X') and self.settings.contains('Y'):
-            self.move(self.settings.value('X'), self.settings.value('Y'))
+        # statusBar = self.StatusBar()
+        # statusBar.setSizeGribEnabled(False)
+        # statusBar.showMessage('\"Sudoku\" greets you', 20000)
+        # if self.settings.contains('X') and self.settings.contains('Y'):
+        #     self.move(self.settings.value('X'), self.settings.value('Y'))
 
     def closeEvent(self, evt):
         g = self.geometry()
