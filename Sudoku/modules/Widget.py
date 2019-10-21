@@ -142,6 +142,49 @@ class Widget(QtWidgets.QWidget):
             if not cell.isCellChange:
                 cell.clearCellBlock()
 
+    def getDataAllCells(self):
+        listAllData = []
+        for cell in self.cells:
+            listAllData.append('0' if cell.isCellChange else '1')
+            s = cell.text()
+            listAllData.append(s if len(s) == '1' else '0')
+        return ''.join(listAllData)
+
+    def getDataAllCellsMini(self):
+        listAllData = []
+        for cell in self.cells:
+            listAllData.append(s if len(s) == '1' else '0')
+        return ''.join(listAllData)
+
+    def getDataAllCellsExcel(self):
+        numbers = (9, 18, 27, 36, 45, 54, 63, 72)
+        listAllData = [self.cells[0].text()]
+        for i in range(1, 81):
+            listAllData.append('\r\n' if i in numbers else '\t')
+            listAllData.append(self.cells[i].text())
+        listAllData.append('\r\n')
+        return ''.join(listAllData)
+
+    def setDataAllCells(self, data):
+        l = len(data)
+        if l == 81:
+            for i in range(0, 81):
+                if data[i] == '0':
+                    self.cells[i].setText('')
+                    self.cells[i].clearCellBlock()
+                else:
+                    self.cells[i].setText(data[i])
+                    self.cells[i].setCellBlock()
+            self.onChangeCellFocus(0)
+        elif l == 162:
+            for i in range(0, 162, 2):
+                if data[i] == '0':
+                    self.cells[i//2].clearCellBlock()
+                else:
+                    self.cells[i//2].setCellBlock()
+                self.cells[i//2].setText('' if data[i+1] == '0' else data[i+1])
+            self.onChangeCellFocus(0)
+
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
     windows = Widget()

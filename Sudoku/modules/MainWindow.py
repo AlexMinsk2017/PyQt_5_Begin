@@ -1,5 +1,6 @@
 from PyQt5 import QtWidgets, QtCore, QtGui, QtPrintSupport
 from Sudoku.modules.Widget import Widget
+import re
 
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self, parent=None):
@@ -29,6 +30,11 @@ class MainWindow(QtWidgets.QMainWindow):
         action.setStatusTip('Application shutdown')
 
         myMenuEdit = menuBar.addMenu('&Edit')
+        #Copy/Paste
+        action = myMenuEdit.addAction(QtGui.QIcon(r'images/copy.png'), "&Copy", self.onCopyData, QtCore.Qt.CTRL + QtCore.Qt.Key_C)
+        toolBar.addAction(action)
+        action.setStatusTip('Copy game to clipboard')
+
         action = myMenuEdit.addAction('&Block', self.sudoku.onBlockCell, QtCore.Qt.Key_F2)
         action.setStatusTip('Blocked active cell')
 
@@ -60,6 +66,46 @@ class MainWindow(QtWidgets.QMainWindow):
         # statusBar.showMessage('\"Sudoku\" greets you', 20000)
         # if self.settings.contains('X') and self.settings.contains('Y'):
         #     self.move(self.settings.value('X'), self.settings.value('Y'))
+
+    def onCopyData(self):
+        QtWidgets.QApplication.clipboard().setText(self.sudoku.getDataAllCells())
+    def onCopyDataMini(self):
+        QtWidgets.QApplication.clipboard().setText(self.sudoku.getDataAllCellsMini())
+    def onCopyDataExcel(self):
+        QtWidgets.QApplication.clipboard().setText(self.sudoku.getDataAllCellsExcel())
+    def onPasteData(self):
+        data = QtWidgets.QApplication.clipboard().text()
+        if data:
+            if len(data) == 81 or len(data) == 162:
+                r = re.compile(r'[^0-9]')
+                if not r.match(data):
+                    self.sudoku.setDataAllCells(data)
+                    return
+        self.dataErrorMsg()
+    def onPasteDataExcel(self):
+        data = QtWidgets.QApplication.clipboard().text()
+        if data:
+            data = data.replace('\r', '')
+            r = re.compile(r'([0-9]?[\t\n]){81}')
+            if r.match(data):
+                result = []
+                if data[-1] == '\n':
+                    data = data[:-1]
+                dl = data.split('\n')
+                for sl in dl:
+                    dli = data.split('\t')
+                    for sli in dli:
+                        if len(sli) == '0':
+                            result.append('00')
+                        else:
+                            result.append('0' + sli[0])
+                data = ''.join(result)
+                self.sudoku.setDataAllCells(data)
+                return
+        self.dataErrorMsg()
+
+    def dataErrorMsg(self):
+        QtWidgets.QMessageBox.information(self, 'Sudoku', 'Unreadble data file format')
 
     def closeEvent(self, evt):
         g = self.geometry()
