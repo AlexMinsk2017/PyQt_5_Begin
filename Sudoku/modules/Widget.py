@@ -153,6 +153,7 @@ class Widget(QtWidgets.QWidget):
     def getDataAllCellsMini(self):
         listAllData = []
         for cell in self.cells:
+            s = cell.text()
             listAllData.append(s if len(s) == '1' else '0')
         return ''.join(listAllData)
 
@@ -184,6 +185,27 @@ class Widget(QtWidgets.QWidget):
                     self.cells[i//2].setCellBlock()
                 self.cells[i//2].setText('' if data[i+1] == '0' else data[i+1])
             self.onChangeCellFocus(0)
+
+    def printer(self, printer):
+        penText = QtGui.QPen(QtGui.QColor(MyLabel.colorBlack), 1)
+        penBorder = QtGui.QPen(QtGui.QColor(QtCore.Qt.darkGray), 1)
+        brushOrange = QtGui.QPen(QtGui.QColor(MyLabel.colorOrange), 1)
+        brushGrey = QtGui.QPen(QtGui.QColor(MyLabel.colorGrey), 1)
+        painter = QtGui.QPainter()
+        painter.begin(printer)
+        painter.setFont(QtGui.QFont('Verdana', pointSize=14))
+        i = 0
+        for j in range(0, 9):
+            for k in range(0, 9):
+                x = j * 30
+                y = k * 30
+                painter.setPen(penBorder)
+                painter.setBrush(brushGrey if self.cells[i].bgColorDefault == MyLabel.colorGrey else brushOrange)
+                painter.drawRect(x, y, 30, 30)
+                painter.setPen(penText)
+                painter.drawText(x, y, 30, 30, QtCore.Qt.AlignCenter, self.cells[i].text())
+                i += 1
+            painter.end()
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)

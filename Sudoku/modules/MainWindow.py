@@ -23,6 +23,13 @@ class MainWindow(QtWidgets.QMainWindow):
         toolBar.addAction(action)
         action.setStatusTip('Create the new, empty game')
 
+        action = myMenuFile.addAction(QtGui.QIcon(r'Sudoku/images/new.png'), '&Save game', self.onSave, QtCore.Qt.CTRL + QtCore.Qt.Key_S)
+        toolBar.addAction(action)
+        action.setStatusTip('Save game to file')
+        action = myMenuFile.addAction(QtGui.QIcon(r'Sudoku/images/new.png'), '&Save game compact', self.onSaveMini)
+        # toolBar.addAction(action)
+        action.setStatusTip('Save game compact to file')
+
         myMenuFile.addSeparator()
         toolBar.addSeparator()
 
@@ -34,6 +41,20 @@ class MainWindow(QtWidgets.QMainWindow):
         action = myMenuEdit.addAction(QtGui.QIcon(r'images/copy.png'), "&Copy", self.onCopyData, QtCore.Qt.CTRL + QtCore.Qt.Key_C)
         toolBar.addAction(action)
         action.setStatusTip('Copy game to clipboard')
+        action = myMenuEdit.addAction(QtGui.QIcon(r'images/copy.png'), "C&opy compact", self.onCopyDataMini)
+        # toolBar.addAction(action)
+        action.setStatusTip('Copy game compact')
+        action = myMenuEdit.addAction(QtGui.QIcon(r'images/copy.png'), "Copy to &Excel", self.onCopyDataExcel)
+        # toolBar.addAction(action)
+        action.setStatusTip('Copy game to Excel')
+        action = myMenuEdit.addAction(QtGui.QIcon(r'images/copy.png'), "Paste", self.onPasteData)
+        # toolBar.addAction(action)
+        action.setStatusTip('Paste game')
+        action = myMenuEdit.addAction(QtGui.QIcon(r'images/copy.png'), "Paste from Excel", self.onPasteDataExcel)
+        # toolBar.addAction(action)
+        action.setStatusTip('Paste game from Excel')
+        myMenuEdit.addSeparator()
+        toolBar.addSeparator()
 
         action = myMenuEdit.addAction('&Block', self.sudoku.onBlockCell, QtCore.Qt.Key_F2)
         action.setStatusTip('Blocked active cell')
@@ -66,6 +87,38 @@ class MainWindow(QtWidgets.QMainWindow):
         # statusBar.showMessage('\"Sudoku\" greets you', 20000)
         # if self.settings.contains('X') and self.settings.contains('Y'):
         #     self.move(self.settings.value('X'), self.settings.value('Y'))
+
+    def onOpenFile(self):
+        fileName = QtWidgets.QFileDialog.getOpenFileName(self, 'Select file', QtCore.QDir.homePath(), 'Sudoku (*.svd)')[0]
+        if fileName:
+            data = ''
+            try:
+                with open(fileName, newline='') as f:
+                    data = f.read()
+            except:
+                QtWidgets.QMessageBox.information(self, 'Sudoku', 'Don\'t open file')
+                return
+            if len(data) > 2:
+                data = data[:-1]
+            if len(data) == 81 or len(data) == 162:
+                r = re.compile(r'[^0-9]')
+                if not r.match(data):
+                    self.sudoku.setDataAllCells(data)
+                    return
+            self.dataErrorMsg()
+    def onSave(self):
+        self.saveSVDFile(self.sudoku.getDataAllCells())
+    def onSaveMini(self):
+        self.saveSVDFile(self.sudoku.getDataAllCellsMini())
+    def saveSVDFile(self, data):
+        fileName = QtWidgets.QFileDialog.getSaveFileName(self, 'Select file', QtCore.QDir.homePath(), 'Sudoku (*.svd)')[0]
+        if fileName:
+            try:
+                with open(fileName, mode='w', newline='') as f:
+                    f.write(data)
+                self.statusBar().showMessage('File saved')
+            except:
+                QtWidgets.QMessageBox.information(self, 'Sudoku', '')
 
     def onCopyData(self):
         QtWidgets.QApplication.clipboard().setText(self.sudoku.getDataAllCells())
