@@ -186,7 +186,7 @@ class Widget(QtWidgets.QWidget):
                 self.cells[i//2].setText('' if data[i+1] == '0' else data[i+1])
             self.onChangeCellFocus(0)
 
-    def printer(self, printer):
+    def print(self, printer):
         penText = QtGui.QPen(QtGui.QColor(MyLabel.colorBlack), 1)
         penBorder = QtGui.QPen(QtGui.QColor(QtCore.Qt.darkGray), 1)
         brushOrange = QtGui.QPen(QtGui.QColor(MyLabel.colorOrange), 1)
@@ -200,12 +200,14 @@ class Widget(QtWidgets.QWidget):
                 x = j * 30
                 y = k * 30
                 painter.setPen(penBorder)
-                painter.setBrush(brushGrey if self.cells[i].bgColorDefault == MyLabel.colorGrey else brushOrange)
+                # color = brushGrey if self.cells[i].bgColorDefault == MyLabel.colorGrey else brushOrange
+                color = QtGui.QColor(MyLabel.colorGrey) if self.cells[i].bgColorDefault == MyLabel.colorGrey else QtGui.QColor(MyLabel.colorOrange)
+                painter.setBrush(color)
                 painter.drawRect(x, y, 30, 30)
                 painter.setPen(penText)
                 painter.drawText(x, y, 30, 30, QtCore.Qt.AlignCenter, self.cells[i].text())
                 i += 1
-            painter.end()
+        painter.end()
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)

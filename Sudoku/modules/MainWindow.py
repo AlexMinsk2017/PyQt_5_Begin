@@ -1,6 +1,7 @@
 from PyQt5 import QtWidgets, QtCore, QtGui, QtPrintSupport
 from Sudoku.modules.Widget import Widget
 import re
+from Sudoku.modules.previewdialog import PreviewDialog
 
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self, parent=None):
@@ -55,6 +56,17 @@ class MainWindow(QtWidgets.QMainWindow):
         action.setStatusTip('Paste game from Excel')
         myMenuEdit.addSeparator()
         toolBar.addSeparator()
+        ##################Print
+        action = myMenuFile.addAction(QtGui.QIcon(r'images/copy.png'), 'Print...', self.onPrint, QtCore.Qt.CTRL + QtCore.Qt.Key_P)
+        toolBar.addAction(action)
+        action.setStatusTip('Print game')
+        action = myMenuFile.addAction(QtGui.QIcon(r'images/copy.png'), 'Prievew...', self.onPreview)
+        toolBar.addAction(action)
+        action.setStatusTip('Prievew game')
+        action = myMenuFile.addAction(QtGui.QIcon(r'images/copy.png'), 'Page setup...', self.onPageSetup)
+        #toolBar.addAction(action)
+        action.setStatusTip('Setup page')
+
 
         action = myMenuEdit.addAction('&Block', self.sudoku.onBlockCell, QtCore.Qt.Key_F2)
         action.setStatusTip('Blocked active cell')
@@ -87,6 +99,18 @@ class MainWindow(QtWidgets.QMainWindow):
         # statusBar.showMessage('\"Sudoku\" greets you', 20000)
         # if self.settings.contains('X') and self.settings.contains('Y'):
         #     self.move(self.settings.value('X'), self.settings.value('Y'))
+
+    def onPrint(self):
+        pd = QtPrintSupport.QPrintDialog(self.printer, parent=self)
+        pd.setOptions(QtPrintSupport.QAbstractPrintDialog.PrintToFile|QtPrintSupport.QAbstractPrintDialog.PrintSelection)
+        if pd.exec() == QtWidgets.QDialog.Accepted:
+            self.sudoku.print(self.printer)
+    def onPreview(self):
+        pd = PreviewDialog(self)
+        pd.exec()
+    def onPageSetup(self):
+        pd = QtPrintSupport.QPageSetupDialog(self.printer, parent=self)
+        pd.exec()
 
     def onOpenFile(self):
         fileName = QtWidgets.QFileDialog.getOpenFileName(self, 'Select file', QtCore.QDir.homePath(), 'Sudoku (*.svd)')[0]
